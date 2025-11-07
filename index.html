@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leadership Games Score Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+        
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5em;
+            border: 4px solid #667eea;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+        
+        button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+        
+        .btn-game {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 30px;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .icon {
+            font-size: 2em;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .score-number {
+            font-size: 4em;
+            font-weight: bold;
+        }
+        
+        .score-item {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .score-item-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #56ab2f;
+        }
+        
+        .student-list {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .student-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .trophy {
+            text-align: center;
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 0: Name Input -->
+        <div id="screen-name">
+            <div class="icon" style="text-align: center; font-size: 4em; margin-bottom: 20px;">⭐</div>
+            <h2>Hey Leader! What's your name? 🌟</h2>
+            <input type="text" id="studentName" placeholder="Type your name here..." onkeypress="if(event.key==='Enter') submitName()">
+            <button class="btn-primary" onclick="submitName()">Let's Go! 🚀</button>
+        </div>
+
+        <!-- Screen 1: Game Selection -->
+        <div id="screen-games" class="hidden">
+            <h2>Awesome, <span id="displayName"></span>! 👋</h2>
+            <p class="subtitle">Which game did you play?</p>
+            <button class="btn-game" onclick="selectGame('Team Builder Challenge')">
+                <span>👥 Team Builder Challenge</span>
+                <span style="background: white; color: #4facfe; padding: 5px 15px; border-radius: 20px; font-size: 0.8em;">Max: 100</span>
+            </button>
+            <button class="btn-game" onclick="selectGame('Decision Maker Quest')">
+                <span>🎯 Decision Maker Quest</span>
+                <span style="background: white; color: #4facfe; padding: 5px 15px; border-radius: 20px; font-size: 0.8em;">Max: 100</span>
+            </button>
+            <button class="btn-game" onclick="selectGame('Problem Solver Adventure')">
+                <span>⭐ Problem Solver Adventure</span>
+                <span style="background: white; color: #4facfe; padding: 5px 15px; border-radius: 20px; font-size: 0.8em;">Max: 100</span>
+            </button>
+            <button class="btn-game" onclick="selectGame('Communication Master')">
+                <span>✉️ Communication Master</span>
+                <span style="background: white; color: #4facfe; padding: 5px 15px; border-radius: 20px; font-size: 0.8em;">Max: 100</span>
+            </button>
+        </div>
+
+        <!-- Screen 2: Score Input -->
+        <div id="screen-score" class="hidden">
+            <div class="icon" style="text-align: center; font-size: 4em; margin-bottom: 20px;">🏆</div>
+            <h2>Great choice! 🎮</h2>
+            <p class="subtitle">What score did you get in <strong><span id="gameName"></span></strong>?</p>
+            <input type="number" id="scoreInput" min="0" max="100" placeholder="0-100" onkeypress="if(event.key==='Enter') submitScore()">
+            <button class="btn-success" onclick="submitScore()">Save Score! 💾</button>
+        </div>
+
+        <!-- Screen 3: Add More -->
+        <div id="screen-more" class="hidden">
+            <div class="icon" style="text-align: center; font-size: 4em; margin-bottom: 20px;">✅</div>
+            <h2 style="color: #56ab2f;">Score Saved! ✅</h2>
+            <div class="score-display">
+                <p style="font-size: 1.2em; margin-bottom: 10px;">Current Total Score:</p>
+                <div class="score-number" id="totalScore">0</div>
+            </div>
+            <p class="subtitle">Did you play more games?</p>
+            <div class="button-group">
+                <button class="btn-primary" onclick="addAnother()">➕ Add Another</button>
+                <button class="btn-secondary" onclick="finish()">🏁 I'm Done!</button>
+            </div>
+        </div>
+
+        <!-- Screen 4: Results -->
+        <div id="screen-results" class="hidden">
+            <div class="trophy">🏆</div>
+            <h1>Amazing Work! 🎉</h1>
+            <h2><span id="finalName"></span>'s Final Score:</h2>
+            <div class="score-display">
+                <div class="score-number" id="finalTotalScore">0</div>
+            </div>
+            
+            <div style="background: #f0f0f0; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; color: #667eea;">Games Completed:</h3>
+                <div id="scoresList"></div>
+            </div>
+
+            <div id="allStudentsList" class="hidden">
+                <div class="student-list">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">All Students Today:</h3>
+                    <div id="studentsList"></div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="startNew()">➕ Add Student</button>
+                <button class="btn-success" onclick="downloadCSV()">📥 Download Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStudent = {
+            name: '',
+            scores: [],
+            total: 0
+        };
+        let allStudents = [];
+        let currentGame = '';
+
+        function showScreen(screenId) {
+            document.querySelectorAll('[id^="screen-"]').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function submitName() {
+            const name = document.getElementById('studentName').value.trim();
+            if (name) {
+                currentStudent.name = name;
+                document.getElementById('displayName').textContent = name;
+                showScreen('screen-games');
+            }
+        }
+
+        function selectGame(game) {
+            currentGame = game;
+            document.getElementById('gameName').textContent = game;
+            showScreen('screen-score');
+        }
+
+        function submitScore() {
+            const score = parseInt(document.getElementById('scoreInput').value);
+            if (score >= 0 && score <= 100) {
+                currentStudent.scores.push({
+                    game: currentGame,
+                    score: score
+                });
+                currentStudent.total += score;
+                document.getElementById('totalScore').textContent = currentStudent.total;
+                document.getElementById('scoreInput').value = '';
+                showScreen('screen-more');
+            }
+        }
+
+        function addAnother() {
+            showScreen('screen-games');
+        }
+
+        function finish() {
+            allStudents.push({...currentStudent});
+            
+            document.getElementById('finalName').textContent = currentStudent.name;
+            document.getElementById('finalTotalScore').textContent = currentStudent.total;
+            
+            let scoresHTML = '';
+            currentStudent.scores.forEach(entry => {
+                scoresHTML += `
+                    <div class="score-item">
+                        <span>${entry.game}</span>
+                        <span class="score-item-score">${entry.score} pts</span>
+                    </div>
+                `;
+            });
+            document.getElementById('scoresList').innerHTML = scoresHTML;
+            
+            if (allStudents.length > 0) {
+                document.getElementById('allStudentsList').classList.remove('hidden');
+                let studentsHTML = '';
+                allStudents.forEach(student => {
+                    studentsHTML += `
+                        <div class="student-item">
+                            <span><strong>${student.name}</strong></span>
+                            <span style="font-size: 1.3em; font-weight: bold; color: #667eea;">${student.total} pts</span>
+                        </div>
+                    `;
+                });
+                document.getElementById('studentsList').innerHTML = studentsHTML;
+            }
+            
+            showScreen('screen-results');
+        }
+
+        function startNew() {
+            currentStudent = {
+                name: '',
+                scores: [],
+                total: 0
+            };
+            document.getElementById('studentName').value = '';
+            showScreen('screen-name');
+        }
+
+        function downloadCSV() {
+            let csv = 'Student Name,Game,Score,Total Score,Date\n';
+            const now = new Date().toLocaleString();
+            
+            allStudents.forEach(student => {
+                student.scores.forEach((entry, index) => {
+                    csv += `${student.name},${entry.game},${entry.score},${index === student.scores.length - 1 ? student.total : ''},${now}\n`;
+                });
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'leadership_scores.csv';
+            a.click();
+        }
+    </script>
+</body>
+</html>
